@@ -1,0 +1,321 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<title>아현이 생일선물 월드컵</title>
+
+<style>
+
+*{
+margin:0;
+padding:0;
+box-sizing:border-box;
+font-family:Pretendard,sans-serif;
+}
+
+body{
+background:#ffeef5;
+display:flex;
+justify-content:center;
+align-items:center;
+min-height:100vh;
+}
+
+#app{
+width:95%;
+max-width:1000px;
+background:white;
+padding:30px;
+border-radius:20px;
+box-shadow:0 10px 25px rgba(0,0,0,.15);
+}
+
+h1{
+text-align:center;
+color:#ff4d8d;
+margin-bottom:20px;
+}
+
+h2{
+text-align:center;
+margin-bottom:20px;
+}
+
+button{
+padding:15px 40px;
+font-size:20px;
+border:none;
+border-radius:50px;
+background:#ff4d8d;
+color:white;
+cursor:pointer;
+display:block;
+margin:auto;
+}
+
+#game{
+display:none;
+}
+
+.match{
+display:flex;
+gap:20px;
+}
+
+.card{
+flex:1;
+background:white;
+border-radius:15px;
+overflow:hidden;
+cursor:pointer;
+box-shadow:0 5px 15px rgba(0,0,0,.15);
+}
+
+.card img{
+width:100%;
+display:block;
+}
+
+.name{
+padding:15px;
+text-align:center;
+font-weight:bold;
+font-size:20px;
+}
+
+#winner{
+display:none;
+text-align:center;
+}
+
+#winner img{
+width:300px;
+max-width:90%;
+display:block;
+margin:20px auto;
+}
+
+#progress{
+margin-top:20px;
+text-align:center;
+}
+
+</style>
+
+<script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.9.3/dist/confetti.browser.min.js"></script>
+
+</head>
+
+<body>
+
+<div id="app">
+
+<div id="start">
+
+<h1>💖 아현이 생일선물 월드컵 💖</h1>
+
+<p style="text-align:center;margin-bottom:25px;">
+가장 마음에 드는 선물을 선택하세요.
+</p>
+
+<button onclick="startGame()">
+START
+</button>
+
+</div>
+
+<div id="game">
+
+<h1>아현이 생일선물 월드컵</h1>
+
+<h2 id="round"></h2>
+
+<div class="match">
+
+<div class="card" onclick="pick(0)">
+<img id="leftImg">
+<div class="name" id="leftName"></div>
+</div>
+
+<div class="card" onclick="pick(1)">
+<img id="rightImg">
+<div class="name" id="rightName"></div>
+</div>
+
+</div>
+
+<div id="progress"></div>
+
+</div>
+
+<div id="winner">
+
+<h1>🏆 우승 🏆</h1>
+
+<img id="winnerImg">
+
+<h2 id="winnerName"></h2>
+
+<button onclick="location.reload()">
+다시하기
+</button>
+
+</div>
+
+<script>
+const $ = id => document.getElementById(id);
+
+const products = [
+{name:"뮤이 팔찌",img:"images/01.png"},
+{name:"팔찌 2",img:"images/02.png"},
+{name:"오니크 팔찌",img:"images/03.png"},
+{name:"큐티 아모르 팔찌",img:"images/04.png"},
+{name:"블링 팔찌",img:"images/05.png"},
+{name:"아모르 팔찌",img:"images/06.png"},
+{name:"러블리아 팔찌",img:"images/07.png"},
+{name:"아몬드 팔찌",img:"images/08.png"},
+{name:"러브레터 팔찌",img:"images/09.png"},
+{name:"플로리안 팔찌",img:"images/10.png"},
+{name:"로맨틱 포인트 팔찌",img:"images/11.png"},
+{name:"사랑해 팔찌",img:"images/12.png"},
+{name:"클리프투게더 클립체인 팔찌",img:"images/13.png"},
+{name:"팔찌 14",img:"images/14.png"},
+{name:"팔찌 15",img:"images/15.png"},
+{name:"팔찌 16",img:"images/16.png"}
+];
+
+let current = [];
+let next = [];
+let matchIndex = 0;
+
+function shuffle(arr){
+    for(let i=arr.length-1;i>0;i--){
+        const j=Math.floor(Math.random()*(i+1));
+        [arr[i],arr[j]]=[arr[j],arr[i]];
+    }
+}
+function startGame(){
+
+    current=[...products];
+    shuffle(current);
+
+    next=[];
+    matchIndex=0;
+
+    $("start").style.display="none";
+    $("game").style.display="block";
+
+    showMatch();
+}
+
+function showMatch(){
+
+    // 우승
+if(current.length===1){
+
+    $("game").style.display="none";
+    $("winner").style.display="block";
+
+    $("winnerImg").src=current[0].img;
+    $("winnerName").innerText="🏆 "+current[0].name;
+
+    // 5초 동안 폭죽
+    const duration = 5000;
+    const end = Date.now() + duration;
+
+    const interval = setInterval(() => {
+
+        confetti({
+            particleCount: 6,
+            angle: 60,
+            spread: 80,
+            origin: { x: 0 }
+        });
+
+        confetti({
+            particleCount: 6,
+            angle: 120,
+            spread: 80,
+            origin: { x: 1 }
+        });
+
+        confetti({
+            particleCount: 12,
+            spread: 120,
+            origin: {
+                x: Math.random(),
+                y: Math.random() * 0.5
+            }
+        });
+
+        if(Date.now() > end){
+            clearInterval(interval);
+        }
+
+    },150);
+
+    return;
+}
+    // 현재 라운드 종료
+    if(matchIndex>=current.length){
+
+        current=[...next];
+        next=[];
+        matchIndex=0;
+
+        shuffle(current);
+    }
+
+    // 홀수 자동 진출
+    if(matchIndex===current.length-1){
+
+        next.push(current[matchIndex]);
+        matchIndex++;
+
+        showMatch();
+        return;
+    }
+
+    const left=current[matchIndex];
+    const right=current[matchIndex+1];
+
+    $("leftImg").src=left.img;
+    $("leftName").innerText=left.name;
+
+    $("rightImg").src=right.img;
+    $("rightName").innerText=right.name;
+
+    $("round").innerText=current.length+"강";
+    $("progress").innerText=(matchIndex/2+1)+" / "+Math.ceil(current.length/2);
+}
+function pick(side){
+
+    if(side===0){
+        next.push(current[matchIndex]);
+    }else{
+        next.push(current[matchIndex+1]);
+    }
+
+    matchIndex+=2;
+
+    showMatch();
+}
+
+// Enter 키로 시작
+document.addEventListener("keydown",e=>{
+    if(e.key==="Enter" && $("start").style.display!=="none"){
+        startGame();
+    }
+});
+
+// 이미지가 없으면 표시
+document.querySelectorAll("img").forEach(img=>{
+    img.onerror=()=>{
+        img.src="https://placehold.co/600x600?text=No+Image";
+    };
+});
+</script>
+</body>
+</html>
